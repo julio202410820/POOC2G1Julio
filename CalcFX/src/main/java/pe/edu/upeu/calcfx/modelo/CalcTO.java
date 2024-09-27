@@ -1,10 +1,15 @@
 package pe.edu.upeu.calcfx.modelo;
 
 public class CaltTO {
+    int id;
     private String num1;
     private String num2;
     private char operador;
     private String resultado;
+
+    public int getId() {return id;}
+
+    public void setId(int id) {this.id = id;}
 
     @Override
     public String toString() {
