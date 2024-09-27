@@ -10,5 +10,4 @@ public interface CalcServiceI {
     public void actuslizarresultado(CaltTO to, int index);
     public void eliminarResultado(int index);
 
-
 }

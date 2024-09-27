@@ -1,6 +1,5 @@
 package pe.edu.upeu.calcfx.control;
 
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -40,8 +39,6 @@ public class CalcControl {
 
     private ObservableList<CaltTO> calcTOList;
     private int indexEdit=-1;
-
-
 
 
     @FXML
