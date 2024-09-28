@@ -14,7 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pe.edu.upeu.calcfx.modelo.CaltTO;
+import pe.edu.upeu.calcfx.modelo.CalcTO;
 import pe.edu.upeu.calcfx.servicio.CalcServiceI;
 
 import java.util.List;
@@ -30,29 +30,43 @@ public class CalcControl {
 
     @FXML
     TableView tableView;
-    @FXML
-    TableColumn<CaltTO, String> cVAl1, cVAl2, cResult;
-    @FXML
-    TableColumn<CaltTO, Character>cOper;
 
     @FXML
-    TableColumn<CaltTO, Void> cOpc;
+    TableColumn<CalcTO, String> cVal1, cVal2, cResult;
 
-    private ObservableList<CaltTO> calcTOList;
+    @FXML
+    TableColumn<CalcTO, Character> cOper;
+
+    @FXML
+    TableColumn<CalcTO, Void> cOpc;
+
+    private ObservableList<CalcTO> calcTOList;
     private int indexEdit=-1;
 
 
 
+    int t=0;
 
     @FXML
     public void accionButton(ActionEvent event){
-        System.out.println("hello Word");
-        Button button=(Button)event.getSource();
+        System.out.println("Holas");
+        Button button= (Button)event.getSource();
         switch (button.getId()){
             case "btn7","btn8","btn9","btn6","btn5","btn4","btn3","btn2","btn1","btn0":{
                 escribirNumeros(button.getText());
+                if(button.getId().equals("btn7") || button.getId().equals("btn8") ){
+
+                    if(t==0){
+                        button.setText("X");
+                        t=1;
+                    }else {
+                        button.setText("O");
+                        t=0;
+                    }
+                }
+
             }break;
-            case "btnSum","btnMult","btnRest","btnDiv":{
+            case "btnSum", "btnMul", "btnRest", "btnDiv":{
                 operador(button.getText());
             }break;
             case "btnIgual":{
@@ -63,68 +77,77 @@ public class CalcControl {
             }
 
         }
+
     }
 
     public void escribirNumeros(String valor){
         txtResultado.appendText(valor);
     }
+
     public void operador(String valor){
         txtResultado.appendText(" "+valor+" ");
     }
-    public void calcularResultado() {
-        String[] valores = txtResultado.getText().split(" ");
-        double val1 = Double.parseDouble(String.valueOf(valores[0]));
-        double val2 = Double.parseDouble(String.valueOf(valores[2]));
 
-        switch (valores[1]) {
-            case "+": {txtResultado.setText(String.valueOf(val1 + val2));}break;
-            case "-": {txtResultado.setText(String.valueOf(val1 - val2));}break;
-            case "/": {txtResultado.setText(String.valueOf(val1 / val2));}break;
-            case "*": {txtResultado.setText(String.valueOf(val1 * val2));}break;
-
+    public  void calcularResultado(){
+        String[] valores=txtResultado.getText().split(" ");
+        double val1=Double.parseDouble(String.valueOf(valores[0]));
+        double val2=Double.parseDouble(String.valueOf(valores[2]));
+        switch (valores[1]){
+            case "+":{txtResultado.setText(String.valueOf(val1+val2));}break;
+            case "-":{txtResultado.setText(String.valueOf(val1-val2));}break;
+            case "/":{txtResultado.setText(String.valueOf(val1/val2));}break;
+            case "*":{txtResultado.setText(String.valueOf(val1*val2));}break;
         }
-        CaltTO to=new CaltTO();
+
+        CalcTO to=new CalcTO();
+        to.setId(Long.parseLong(String.valueOf(indexEdit)));
         to.setNum1(String.valueOf(val1));
         to.setNum2(String.valueOf(val2));
         to.setOperador(valores[1].charAt(0));
         to.setResultado(String.valueOf(txtResultado.getText()));
         if(indexEdit!=-1){
-            serviceI.actuslizarresultado(to, indexEdit);
+            serviceI.actuslizarresultado(to, to.getId());
         }else{
             serviceI.guardarResultados(to);
         }
         indexEdit=-1;
         listaOper();
     }
-    private void editOperCalc(CaltTO cal, int index) {
+
+    private void editOperCalc(CalcTO cal, Long index) {
         System.out.println("Editing: " + cal.getNum1() + " Index:"+index);
         txtResultado.setText(cal.getNum1()+" "+cal.getOperador()+" "+cal.getNum2());
-        indexEdit=index;
+        indexEdit=index.intValue();
     }
-    private void deleteOperCalc(CaltTO cal, int index) {
+
+    private void deleteOperCalc(CalcTO cal, Long index) {
         System.out.println("Deleting: " + cal.getNum2());
         serviceI.eliminarResultado(index);
         listaOper();
-        //tableView.getItems().remove(cal); // Elimina la operación del TableView
+        //tableView.getItems().remove(cal);  // Elimina la operación del TableView
     }
+
     private void addActionButtonsToTable() {
-        Callback<TableColumn<CaltTO, Void>, TableCell<CaltTO, Void>>
+        Callback<TableColumn<CalcTO, Void>, TableCell<CalcTO, Void>>
                 cellFactory = param -> new TableCell<>() {
+
             private final Button editButton = new Button("Edit");
             private final Button deleteButton = new Button("Delete");
+
             {
                 editButton.getStyleClass().setAll("btn", "btn-success");
                 editButton.setOnAction(event -> {
-                    CaltTO cal = getTableView().getItems().get(getIndex());
-                    editOperCalc(cal, getIndex());
+                    CalcTO cal = getTableView().getItems().get(getIndex());
+                    editOperCalc(cal, cal.getId());
                 });
 
                 deleteButton.getStyleClass().setAll("btn", "btn-danger");
                 deleteButton.setOnAction(event -> {
-                    CaltTO cal = getTableView().getItems().get(getIndex());
-                    deleteOperCalc(cal,getIndex());
+                    CalcTO cal = getTableView().getItems().get(getIndex());
+                    deleteOperCalc(cal,cal.getId());
                 });
             }
+
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
@@ -139,29 +162,36 @@ public class CalcControl {
         };
         cOpc.setCellFactory(cellFactory);
     }
-    public void listaOper(){
-        List<CaltTO> lista=serviceI.obtenerResultaOper();
-        for (CaltTO to:lista) {
+
+    public void  listaOper(){
+        List<CalcTO> lista=serviceI.obtenerResultaOper();
+        for (CalcTO to:lista) {
             System.out.println(to.toString());
         }
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        // Vincular columnas con propiedades de CalcTO
-        cVAl1.setCellValueFactory(new PropertyValueFactory<CaltTO,
-                        String>("num1"));
 
-        cVAl1.setCellFactory(TextFieldTableCell.<CaltTO>forTableColumn());
-        cVAl2.setCellValueFactory(new PropertyValueFactory<CaltTO,
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        // Vincular columnas con propiedades de CalcTO
+        cVal1.setCellValueFactory(new PropertyValueFactory<CalcTO,
                 String>("num1"));
 
-        cVAl2.setCellFactory(TextFieldTableCell.<CaltTO>forTableColumn());
+        cVal1.setCellFactory(TextFieldTableCell.<CalcTO>forTableColumn());
+
+        cVal2.setCellValueFactory(new PropertyValueFactory<CalcTO,
+                String>("num2"));
+
+        cVal2.setCellFactory(TextFieldTableCell.<CalcTO>forTableColumn());
+
         cOper.setCellValueFactory(new
                 PropertyValueFactory<>("Operador"));
-        cOper.setCellFactory(ComboBoxTableCell.<CaltTO,
+        cOper.setCellFactory(ComboBoxTableCell.<CalcTO,
                 Character>forTableColumn('+', '-', '/', '*'));
-        cResult.setCellValueFactory(new PropertyValueFactory<CaltTO,
+
+        cResult.setCellValueFactory(new PropertyValueFactory<CalcTO,
                 String>("Resultado"));
 
-        cResult.setCellFactory(TextFieldTableCell.<CaltTO>forTableColumn());
+        cResult.setCellFactory(TextFieldTableCell.<CalcTO>forTableColumn());
+
         // Agregar botones de eliminar y modificar
         addActionButtonsToTable();
         calcTOList = FXCollections.observableArrayList(serviceI.obtenerResultaOper());
@@ -176,6 +206,8 @@ public class CalcControl {
         cOpc.prefWidthProperty().bind(tableView.widthProperty().multiply(0.25));
         tableView.setItems(calcTOList);
     }
+
+
 
 
 
