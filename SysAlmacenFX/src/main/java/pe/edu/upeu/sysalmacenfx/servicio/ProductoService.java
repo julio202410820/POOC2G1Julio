@@ -1,11 +1,13 @@
 package pe.edu.upeu.sysalmacenfx.servicio;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import pe.edu.upeu.sysalmacenfx.modelo.Producto;
 import pe.edu.upeu.sysalmacenfx.repositorio.ProductoRepository;
 
 import java.util.List;
 
+@Service
 public class ProductoService {
     @Autowired
     ProductoRepository repo;
@@ -32,12 +34,11 @@ public class ProductoService {
         return null;
     }
 
-    // Delete a Categoria by ID
+
     public void delete(Long id) {
         repo.deleteById(id);
     }
 
-    // Find a Categoria by ID
     public Producto buscarId(Long id) {
         return repo.findById(id).orElse(null);
     }
