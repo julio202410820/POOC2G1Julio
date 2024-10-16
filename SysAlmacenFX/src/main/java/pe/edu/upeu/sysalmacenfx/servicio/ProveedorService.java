@@ -12,37 +12,32 @@ public class ProveedorService {
     @Autowired
     ProveedorRepository repo;
 
-    public Proveedor save(Proveedor to){
+    public Proveedor save(Proveedor to) {
         return repo.save(to);
     }
 
-    public List<Proveedor> list(){
+    public List<Proveedor> list() {
         return repo.findAll();
     }
 
-    public Proveedor update(Proveedor to, Long idProveedor){
+    public Proveedor update(Proveedor to, Long id) {
         try {
-            Proveedor existingProveedor = repo.findById(idProveedor).orElse(null);
-            if (existingProveedor != null) {
-                existingProveedor.setDniRuc(to.getDniRuc());
-                existingProveedor.setNombresRaso(to.getNombresRaso());
-                existingProveedor.setTipoDoc(to.getTipoDoc());
-                existingProveedor.setCelular(to.getCelular());
-                existingProveedor.setEmail(to.getEmail());
-                existingProveedor.setDireccion(to.getDireccion());
+            Proveedor toe = repo.findById(id).orElse(null);
+            if (toe != null) {
+                toe.setDniRuc(to.getDniRuc());
+                return repo.save(toe);
             }
-            return repo.save(existingProveedor);
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
         return null;
     }
 
-    public void delete(Long idProveedor){
-        repo.deleteById(idProveedor);
+    public void delete(Long id) {
+        repo.deleteById(id);
     }
 
-    public Proveedor buscarId(Long idProveedor){
-        return repo.findById(idProveedor).orElse(null);
+    public Proveedor searchById(Long id) {
+        return repo.findById(id).orElse(null);
     }
 }

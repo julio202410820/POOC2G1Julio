@@ -2,29 +2,30 @@ package pe.edu.upeu.sysalmacenfx.servicio;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pe.edu.upeu.sysalmacenfx.modelo.VentaDetalle;
-import pe.edu.upeu.sysalmacenfx.repositorio.VentaDetalleRepository;
+
+import pe.edu.upeu.sysalmacenfx.modelo.Usuario;
+import pe.edu.upeu.sysalmacenfx.repositorio.UsuarioRepository;
 
 import java.util.List;
 
 @Service
-public class VentaDetalleService {
+public class UsuarioService {
     @Autowired
-    VentaDetalleRepository repo;
+    UsuarioRepository repo;
 
-    public VentaDetalle save(VentaDetalle to) {
+    public Usuario save(Usuario to) {
         return repo.save(to);
     }
 
-    public List<VentaDetalle> list() {
+    public List<Usuario> list() {
         return repo.findAll();
     }
 
-    public VentaDetalle update(VentaDetalle to, Long id) {
+    public Usuario update(Usuario to, Long id) {
         try {
-            VentaDetalle toe = repo.findById(id).orElse(null);
+            Usuario toe = repo.findById(id).orElse(null);
             if (toe != null) {
-                toe.setCantidad(to.getCantidad());
+                toe.setClave(to.getClave());
                 return repo.save(toe);
             }
         } catch (Exception e) {
@@ -37,7 +38,7 @@ public class VentaDetalleService {
         repo.deleteById(id);
     }
 
-    public VentaDetalle searchById(Long id) {
+    public Usuario searchById(Long id) {
         return repo.findById(id).orElse(null);
     }
 }

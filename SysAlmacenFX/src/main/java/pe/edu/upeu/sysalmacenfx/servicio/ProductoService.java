@@ -12,35 +12,32 @@ public class ProductoService {
     @Autowired
     ProductoRepository repo;
 
-    // Save a new Categoria
-    public Producto save(Producto to) {
+    public Producto save(Producto to){
         return repo.save(to);
     }
-
-    // List all Categorias
-    public List<Producto> list() {return repo.findAll();}
-
-    // Update an existing Categoria
-    public Producto update(Producto to, Long id) {
+    public List<Producto> list(){
+        return repo.findAll();
+    }
+    public Producto update(Producto to, Long id){
         try {
-            Producto existingCategoria = repo.findById(id).orElse(null);
-            if (existingCategoria != null) {
-                existingCategoria.setNombre(to.getNombre());
-                return repo.save(existingCategoria);
+            Producto toe=repo.findById(id).get();
+            if(toe!=null){
+                toe.setNombre(to.getNombre());
             }
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            return repo.save(toe);
+        }catch (Exception e){
+            System.out.println("Error: "+ e.getMessage());
         }
         return null;
     }
 
-
-    public void delete(Long id) {
+    public Producto update(Producto to){
+        return repo.save(to);
+    }
+    public void delete(Long id){
         repo.deleteById(id);
     }
-
-    public Producto buscarId(Long id) {
-        return repo.findById(id).orElse(null);
+    public Producto searchById(Long id){
+        return repo.findById(id).get();
     }
-
 }

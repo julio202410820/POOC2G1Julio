@@ -12,39 +12,32 @@ public class EmisorService {
     @Autowired
     EmisorRepository repo;
 
-    public Emisor save(Emisor to){
+    public Emisor save(Emisor to) {
         return repo.save(to);
     }
 
-    public List<Emisor> list(){
+    public List<Emisor> list() {
         return repo.findAll();
     }
 
-    public Emisor update(Emisor to, Long idEmisor){
+    public Emisor update(Emisor to, Long id) {
         try {
-            Emisor existingEmisor = repo.findById(idEmisor).orElse(null);
-            if (existingEmisor != null) {
-                existingEmisor.setRuc(to.getRuc());
-                existingEmisor.setNombreComercial(to.getNombreComercial());
-                existingEmisor.setUbigeo(to.getUbigeo());
-                existingEmisor.setDomicilioFiscal(to.getDomicilioFiscal());
-                existingEmisor.setUrbanizacion(to.getUrbanizacion());
-                existingEmisor.setDepartamento(to.getDepartamento());
-                existingEmisor.setProvincia(to.getProvincia());
-                existingEmisor.setDistrito(to.getDistrito());
+            Emisor toe = repo.findById(id).orElse(null);
+            if (toe != null) {
+                toe.setRuc(to.getRuc());
+                return repo.save(toe);
             }
-            return repo.save(existingEmisor);
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
         return null;
     }
 
-    public void delete(Long idEmisor){
-        repo.deleteById(idEmisor);
+    public void delete(Long id) {
+        repo.deleteById(id);
     }
 
-    public Emisor buscarId(Long idEmisor){
-        return repo.findById(idEmisor).orElse(null);
+    public Emisor searchById(Long id) {
+        return repo.findById(id).orElse(null);
     }
 }

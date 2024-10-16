@@ -1,53 +1,47 @@
 package pe.edu.upeu.sysalmacenfx.servicio;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import pe.edu.upeu.sysalmacenfx.dto.ComboBoxOption;
-import pe.edu.upeu.sysalmacenfx.modelo.Categoria;
+import org.springframework.stereotype.Service;
+import pe.edu.upeu.sysalmacenfx.modelo.Cliente;
+import pe.edu.upeu.sysalmacenfx.repositorio.ClienteRepository;
 
-import pe.edu.upeu.sysalmacenfx.repositorio.CategoriaRepository;
-
-
-import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class ClienteService {
+
     @Autowired
-    CategoriaRepository repo;
-    //    CategoriaRepository repo=new  CategoriaRepository()
-//C
-    public Categoria save(Categoria to){
+    ClienteRepository repo;
+
+
+
+    public Cliente save(Cliente to) {
         return repo.save(to);
     }
-    public List <Categoria> list(){
+
+    public List<Cliente> list() {
         return repo.findAll();
     }
-    public Categoria update(Categoria to, Long id){
-        try{
-            Categoria toe=repo.findById(id).get();
-            if(toe!=null){
-                toe.setNombre(to.getNombre());
-            }
-            return repo.save(toe);
 
-        }catch (Exception e){
-            System.out.println("error:"+e.getMessage());
+    // Actualizar un cliente por ID
+    public Cliente update(Cliente to, long dniruc) {
+        try {
+            Cliente toe = repo.findById(dniruc).orElse(null);
+            if (toe != null) {
+                toe.setNombres(to.getNombres());
+                return repo.save(toe);
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
         return null;
     }
-    public void delete(Long id){
-        repo.deleteById(id);
-    }
-    public Categoria buscarId(Long id){
-        return repo.findById(id).get();
-    }
-    public List<ComboBoxOption> listarCombobox(){
-        List<ComboBoxOption> listar =new ArrayList<>();
-        for (Categoria cate : repo.findAll()) {
-            listar.add(new ComboBoxOption(String
-                    .valueOf(cate.getIdCategoria()),
-                    cate.getNombre()));
 
-        }
-        return listar;
+
+    public void delete(long dniruc) {repo.deleteById(dniruc);}
+
+
+    public Cliente searchById(long dniruc) {
+        return repo.findById(dniruc).orElse(null);
     }
 }
