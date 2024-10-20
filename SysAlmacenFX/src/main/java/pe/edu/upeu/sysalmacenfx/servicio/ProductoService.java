@@ -15,12 +15,15 @@ public class ProductoService {
     public Producto save(Producto to){
         return repo.save(to);
     }
+
     public List<Producto> list(){
+
+        System.out.println("pepes");
         return repo.findAll();
     }
     public Producto update(Producto to, Long id){
         try {
-            Producto toe=repo.findById(id).get();
+            Producto toe=repo.findById(id).orElse(null);
             if(toe!=null){
                 toe.setNombre(to.getNombre());
             }
@@ -38,6 +41,6 @@ public class ProductoService {
         repo.deleteById(id);
     }
     public Producto searchById(Long id){
-        return repo.findById(id).get();
+        return repo.findById(id).orElse(null);
     }
 }
